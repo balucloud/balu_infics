@@ -1,0 +1,6 @@
+trigger TriggerToSendEmail on student__c (After insert) {
+   if(Trigger.isinsert&&Trigger.isafter){
+       EmailNotification.sendMail(Trigger.new); 
+   }
+
+}
