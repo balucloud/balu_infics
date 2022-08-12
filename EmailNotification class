@@ -1,0 +1,26 @@
+public class EmailNotification {
+    // Public method
+    public static void sendMail(List<student__c> stuList) {
+        // Create an email message object
+        system.debug('stuList in sendmail method :'+stuList);
+        for(student__c st :stuList){
+            Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+            String address=st.Email__c;
+            String[] toAddresses = new String[] {address};
+            String ccAddresses=st.Class_Owner_Email__c ;
+            system.debug('ccAddresses :'+ccAddresses);
+            String[] setCcAddresses=new String[] {ccAddresses};
+            mail.setToAddresses(toAddresses);
+            mail.setCcAddresses(setCcAddresses);
+            mail.setSubject('Student Registration Notification');
+            mail.setPlainTextBody
+                ('Name' + st.Name + ' Registration is Completed with the below details :'+'\n\n' +
+                 'Name : ' + st.Name + '\n\n'+
+                 'Request Email : ' +st.Email__c + '\n\n' +
+                 'empid: ' +st.empId__c+ '\n\n' +
+                 'Please reach out to System Administrator if you require any further information');
+            Messaging.SendEmailResult[] results = Messaging.sendEmail(
+                new Messaging.SingleEmailMessage[] { mail });
+        }
+    }
+}
