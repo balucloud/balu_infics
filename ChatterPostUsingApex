@@ -1,0 +1,39 @@
+   /*
+* This method is related to access Chatter Feed in class to display the messages in Chatter.
+* 
+* @param evalRecId 		Case id and it comes from the component 'V.recordId'.
+* @param postText		Text to display. 
+* 
+* 
+*/   
+    @AuraEnabled
+    public static void simpleTextPost(Id evalRecId, String postText) 
+    { 
+        collaborationgroup cbgroupid;
+        Id intakeid;
+        Id loggedinUserId=Physician_Review_Demo_Class.getContact();
+        User ahloginUser = [select id,name,profile.name,UserRole.Name from user where contactid =: loggedinUserId LIMIT 1];
+        if( !Test.isRunningTest()){
+            cbgroupid=[select id from collaborationgroup where name='Intake Coordinators Group' limit 1]; 
+        }
+        
+        if (!Test.isRunningTest()){
+            ConnectApi.FeedItemInput feedItemInput = new ConnectApi.FeedItemInput();
+            ConnectApi.MentionSegmentInput mentionSegmentInput = new ConnectApi.MentionSegmentInput();
+            ConnectApi.MessageBodyInput messageBodyInput = new ConnectApi.MessageBodyInput();
+            ConnectApi.TextSegmentInput textSegmentInput = new ConnectApi.TextSegmentInput();
+            messageBodyInput.messageSegments = new List<ConnectApi.MessageSegmentInput>();
+            
+         
+            mentionSegmentInput.id =cbgroupid.id;
+            
+            messageBodyInput.messageSegments.add(mentionSegmentInput);
+            textSegmentInput.text = postText;//'Does anyone know anyone with contacts here?';
+            messageBodyInput.messageSegments.add(textSegmentInput);
+            feedItemInput.body = messageBodyInput;
+            feedItemInput.feedElementType = ConnectApi.FeedElementType.FeedItem;
+            feedItemInput.subjectId = evalRecId ;
+            ConnectApi.FeedElement feedElement = ConnectApi.ChatterFeeds.postFeedElement(null, feedItemInput); 
+        }
+    } 
+    
