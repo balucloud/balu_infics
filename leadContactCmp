@@ -1,0 +1,26 @@
+  <aura:component controller="leadContactCtrl" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="conList" type="List[]"/>
+    <div class="slds">
+        <table class="slds-table slds-table--bordered">  
+            <thead>  
+                <tr>  
+                    <th>Name</th>
+                    <th>Phone</th>  
+                    <th>Email</th>
+                    <th>Description</th>
+                </tr>  
+            </thead>  
+            <tbody>
+                <aura:iteration items="{!v.conList}" var="conItem">  
+                    <tr>  
+                        <td>{!conItem.Contact__r.Name}</td>
+                        <td>{!conItem.Contact__r.Phone}</td>
+                        <td>{!conItem.Contact__r.Email}</td>
+                        <td>{!conItem.Contact__r.Description}</td>
+                    </tr>  
+                </aura:iteration>  
+            </tbody>  
+        </table>
+    </div>
+</aura:component>
