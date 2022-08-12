@@ -1,0 +1,42 @@
+public class LightningRestApiCall {
+private final String clientId =
+'XXXXXX.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXX';
+private final String clientSecret = 'XXXXXXXXXXXXXXX';
+private final String username = 'XXXXXXXXXXXXXXXXXX';
+private final String password = 'XXXXXXXXXXXXXXXXXXXXXX';
+public class deserializeResponse
+{
+public String id;
+public String access_token;
+}
+public class accountwrapper{
+@auraEnabled
+public string Name {set;get;}
+@auraEnabled
+public string Phone {set;get;}
+@auraEnabled
+public string Fax {set;get;}
+@auraEnabled
+public string AccountNumber {set;get;}
+}
+public class accountwrap{
+@auraEnabled
+public string accid{set;get;}
+}
+public String ReturnAccessToken ()
+String reqbody =
+'grant_type=password&client_id='+clientId+'&client_secret='+clientSecret+'&username='+usern
+ame+'&password='+password;
+Http h = new Http();
+HttpRequest req = new HttpRequest();
+req.setBody(reqbody);
+req.setMethod('POST');
+req.setEndpoint('https://test.salesforce.com/services/oauth2/token');
+HttpResponse res = h.send(req);
+string result=res.getBody();
+system.debug('the result is :'+result);
+deserializeResponse resp1 =
+(deserializeResponse)JSON.deserialize(res.getbody(),deserializeResponse.class);
+return resp1.access_token;
+}
