@@ -1,0 +1,42 @@
+ <aura:if isTrue="{!v.openModal5}" >
+                            <div class="demo-only" style="height: 600px;">
+                                <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                                    <div class="slds-modal__container">
+                                        <!-- Header of Modal -->
+                                        <header class="slds-modal__header slds-modal__header_empty">
+                                            <lightning:buttonIcon iconName="utility:close" class="slds-modal__close" size="large" variant="bare" alternativeText="Close" onclick="{! c.closeModal5 }"/>
+                                        </header>
+                                        <!-- Body of Modal -->
+                                        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                                            <div class="slds-grid slds-gutters">
+                                                <div class="slds-col slds-size_1-of-7">
+                                                    <br/>
+                                                    <center>
+                                                        <lightning:icon class="redOnYellow" iconName="utility:warning" alternativeText="Warning!" title="Warning" size ="large" /> 
+                                                        
+                                                    </center>
+                                                </div>
+                                                <div class="slds-col slds-size_6-of-7"> 
+                                                    <center>                      
+                                                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Are you sure you want to proceed ?</h2>
+                                                        
+                                                        <br/><br/>
+                                                        
+                                                        <aura:if isTrue="{!v.spinner}">
+                                                            <lightning:spinner alternativeText="Loading" size="Large" title ="Loading" />
+                                                        </aura:if>
+                                                        <lightning:button variant="brand" label="Yes" title="Yes" onclick="{! c.handleAccept }" disabled="{!v.disableButton}" />
+                                                        <lightning:button variant="brand" label="No" title="No" onclick="{! c.closeModal5 }" />   
+                                                        <!-- </footer> -->
+                                                    </center>    
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </section>
+                                <!-- Backdrop to set background slightly opaque. -->
+                                <div class="slds-backdrop slds-backdrop_open"></div>
+                            </div>
+                        </aura:if>
