@@ -66,7 +66,7 @@ trigger caseValidationTrigger on Case (before insert, before update,after insert
                     {
                         if(vCase.status=='Records Procurement'){
                             vListEARCases00.add(vCase);
-                            Balu_Case_Handler.setAHEARRecordsProcurement(vListEARCases00);
+                            Balu_Case_Handler.setBaluEARRecordsProcurement(vListEARCases00);
                         }
                         if(vCase.status=='Clinical Narration'){
                             vListEARCases1.add(vCase);
@@ -74,7 +74,7 @@ trigger caseValidationTrigger on Case (before insert, before update,after insert
                         }
                         if(vCase.status=='Physician Review'){
                             vListEARCases2.add(vCase);
-                            Balu_Case_Handler.setAHEARPhysicianReviewPhysicianReviewRecordtype(vListEARCases2);
+                            Balu_Case_Handler.setBaluEARPhysicianReviewPhysicianReviewRecordtype(vListEARCases2);
                         }
                         if(vCase.status=='Peer To Peer'){
                             vListEARCases3.add(vCase);
@@ -82,11 +82,11 @@ trigger caseValidationTrigger on Case (before insert, before update,after insert
                         }
                         if(vCase.status=='Outcomes'){
                             vListEARCases4.add(vCase);
-                            Balu_Case_Handler.setAHEAROutcomes(vListEARCases4);
+                            Balu_Case_Handler.setBaluEAROutcomes(vListEARCases4);
                         }
                         if(vCase.status=='Closed'){
                             vListEARCases5.add(vCase);
-                            Balu_Case_Handler.setAHEARClosed(vListEARCases5);
+                            Balu_Case_Handler.setBaluEARClosed(vListEARCases5);
                         }
                     }
                     if(vCase.RecordTypeId==Schema.SObjectType.Case.getRecordTypeInfosByName().get('APO').getRecordTypeId()){
