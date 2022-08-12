@@ -1,0 +1,147 @@
+
+trigger caseValidationTrigger on Case (before insert, before update,after insert,after update) {
+    if(Balu_Costsaving_Recursive.Afterupdaterecursive){
+        
+        // BEFORE INSERT and BEFORE UPDATE
+        
+        if(Trigger.isBefore && (Trigger.isInsert || Trigger.isUpdate)){
+            if (Trigger.isInsert) {
+                CaseTriggerhandler.doNotBillCase(Trigger.New);
+                //change name format to capitalize
+                Balu_Case_Handler.capitalizeName(Trigger.New);
+                //The below helper class is used to update the partner field based on Treating Physician State
+                Balu_Cas_PartnerUpdateHelper.identifyPartner(Trigger.new, null,'Before Insert');
+                Balu_Case_Handler.set_Balu_EAR_APO_Timestamps(Trigger.new, Trigger.oldMap);        
+               new PhysicianAssignmentHelper().assignPhysicianByPrimarySignal(Trigger.New);
+                
+                // Testing start Dt: 07-06-22
+                //Balu_Case_Handler.beforeInsertcasesforSameMember(Trigger.New);
+                // Testing End Dt:
+            	
+            }
+            
+            //The following code sets Demo Review Due Date considering Records Procurement Completed Date Time
+            if (Trigger.isUpdate) {
+
+                //The below helper class is used to update the partner field based on Treating Physician State
+                Balu_Cas_PartnerUpdateHelper.identifyPartner(Trigger.new, Trigger.old,'Before Update'); 
+                Balu_CasAPOservice_PatientValidation.checkPatientInfoValidation(Trigger.new); 
+                //change name format to capitalize
+                Balu_Case_Handler.capitalizeName(Trigger.New);
+                //For Grail Updated fields
+                Balu_Case_Handler.getUpdatedField(Trigger.new,Trigger.oldMap);
+                Balu_Case_Handler.set_Balu_EAR_APO_Timestamps(Trigger.new, Trigger.oldMap);  
+                Balu_Case_Handler.setAHReviewDueDateAndPortalDueDate(Trigger.new);              
+
+                Balu_HN_COE_Status_Validations.Newstatusvalidate(Trigger.new);
+                Balu_HN_COE_Status_Validations.Benefits_Eligibility_validate(Trigger.new); 
+                Balu_HN_COE_Status_Validations.Program_EligibilityValidate(Trigger.new); 
+                Balu_HN_COE_Status_Validations.VirtualIntrovalidations(Trigger.new); 
+                Balu_HN_COE_Status_Validations.PhysicianexpertValidate(Trigger.new); 
+                Balu_HN_COE_Status_Validations.PT_Apt_Completed_validate(Trigger.new);                 
+                Balu_HN_COE_Status_Validations.Closedvalidation(Trigger.new);  
+                
+               new PhysicianAssignmentHelper().assignPhysicianByPrimarySignal(Trigger.New, Trigger.oldMap);
+            }
+            
+            //following code is to calculate the days b/w records and report sent
+            Balu_Case_Handler.AH_Records_and_ReportSent(Trigger.New);
+            Balu_Case_Handler.AH_New_and_ReportSent(Trigger.New);
+            
+            // testing--
+            // Not sure why there are two IF clauses for isUpdate.
+
+            if(Trigger.isUpdate){
+                List<Case> vListEARCases00 = new List<Case>();
+                List<Case> vListEARCases0 = new List<Case>();
+                List<Case> vListEARCases1 = new List<Case>();
+                List<Case> vListEARCases2 = new List<Case>();
+                List<Case> vListEARCases3 = new List<Case>();
+                List<Case> vListEARCases4 = new List<Case>();
+                List<Case> vListEARCases5 = new List<Case>();
+                List<Case> vListAPOCases = new List<Case>();
+                
+                for(Case vCase : Trigger.new){
+                    if(vCase.RecordTypeId==Schema.SObjectType.Case.getRecordTypeInfosByName().get('EAR').getRecordTypeId())
+                    {
+                        if(vCase.status=='Records Procurement'){
+                            vListEARCases00.add(vCase);
+                            Balu_Case_Handler.setAHEARRecordsProcurement(vListEARCases00);
+                        }
+                        if(vCase.status=='Clinical Narration'){
+                            vListEARCases1.add(vCase);
+                            Balu_Case_Handler.setAHEARClinicalNarration(vListEARCases1);
+                        }
+                        if(vCase.status=='Physician Review'){
+                            vListEARCases2.add(vCase);
+                            Balu_Case_Handler.setAHEARPhysicianReviewPhysicianReviewRecordtype(vListEARCases2);
+                        }
+                        if(vCase.status=='Peer To Peer'){
+                            vListEARCases3.add(vCase);
+                            Balu_Case_Handler.setAHEARPhysicianReviewPhysicianP2PReviewRecordtype(vListEARCases3);
+                        }
+                        if(vCase.status=='Outcomes'){
+                            vListEARCases4.add(vCase);
+                            Balu_Case_Handler.setAHEAROutcomes(vListEARCases4);
+                        }
+                        if(vCase.status=='Closed'){
+                            vListEARCases5.add(vCase);
+                            Balu_Case_Handler.setAHEARClosed(vListEARCases5);
+                        }
+                    }
+                    if(vCase.RecordTypeId==Schema.SObjectType.Case.getRecordTypeInfosByName().get('APO').getRecordTypeId()){
+                        vListAPOCases.add(vCase);
+                        Balu_Case_Handler.setBaluAPORecordsprocurment(vListAPOCases);
+                        Balu_Case_Handler.setBaluAPOClinicalNarration(vListAPOCases);
+                        Balu_Case_Handler.setBaluAPOPhysicianReviewPhysicianReviewRecordtype(vListAPOCases);
+                        Balu_Case_Handler.setBaluAPOPhysicianReviewP2PReviewRecordtype(vListAPOCases);
+                        Balu_Case_Handler.setBaluAPOOutcomes(vListAPOCases);
+                        Balu_Case_Handler.setBaluAPOClosed(vListAPOCases);
+                    }
+
+                    if(vCase.RecordTypeId==Schema.SObjectType.Case.getRecordTypeInfosByName().get('Curbside Consult').getRecordTypeId() && (Trigger.isUpdate && Trigger.isBefore)){
+                        Balu_Case_Curbside_Handle.validateCurbsideStatus(Trigger.new);
+                        Balu_Case_Curbside_Handle.CurbreviewDuedate(Trigger.New);
+                        
+                    }
+                    
+                    if(vCase.RecordTypeId==Schema.SObjectType.Case.getRecordTypeInfosByName().get('Grail Posttest').getRecordTypeId() && (Trigger.isUpdate && Trigger.isBefore)){
+                        Balu_Case_GRCustomer_Validations.validateGrailStatus(Trigger.new);   
+                    }
+                } 
+            }
+            // Reset to allow normal GUI operations.
+            Balu_Case_Handler.resetBaluNFlag(Trigger.new);
+            
+        }
+/*--------------------------------------------------------------------------------------
+********************************* After Trigger ****************************************
+--------------------------------------------------------------------------------------*/
+        if(Trigger.isInsert && Trigger.isAfter || Trigger.isUpdate && Trigger.isAfter ){         
+            //Case assignment logic
+             
+            if(Trigger.isAfter && Trigger.isUpdate ){
+            if(AfterUpdateRecursiveHandler_CLS.isFirstTime || Test.isRunningTest())
+                {                       
+                    AfterUpdateRecursiveHandler_CLS.isFirstTime = false;
+                    Balu_Cas_AssignPartnersHelperV1.caseAssignmentController(Trigger.new, Trigger.oldmap);
+                }
+            }
+            
+            if(Trigger.isAfter && Trigger.isInsert ){
+                Balu_Case_Handler.afterInsertCasesforSameMember(Trigger.New);
+            }
+            
+        }
+        
+        if(Trigger.isBefore & Trigger.isUpdate){
+            
+            Balu_Case_Handler.updateTurnAroundTime(Trigger.new);
+            //Updates the Case TAT fields used in TAT Component.
+            
+            Balu_Case_Handler.setTurnAroundTime(Trigger.new);
+        }
+        
+        
+    }
+}
