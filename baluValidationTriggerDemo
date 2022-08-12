@@ -1,5 +1,5 @@
 
-trigger caseValidationTrigger on Case (before insert, before update,after insert,after update) {
+trigger baluValidationTriggerDemo on Case (before insert, before update,after insert,after update) {
     if(Balu_Costsaving_Recursive.Afterupdaterecursive){
         
         // BEFORE INSERT and BEFORE UPDATE
