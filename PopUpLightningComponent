@@ -1,3 +1,6 @@
+ /* Aure If Condition to show Pop Up Window while clicking on Button */
+ ==========================================================
+ 
  <aura:if isTrue="{!v.openModal5}" >
                             <div class="demo-only" style="height: 600px;">
                                 <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
@@ -40,3 +43,219 @@
                                 <div class="slds-backdrop slds-backdrop_open"></div>
                             </div>
                         </aura:if>
+                        
+                        
+                        
+                       
+/* Button Show and hide logic */
+==========================================
+<aura:if isTrue="{!v.showfilesbutton}">
+                                <aura:if isTrue="{!v.showReassignbtn}">    
+                                    <lightning:button  variant="brand" type="ReAssCase" name="ReAssCase" label="Reassign Case" onclick="{!c.ReAssignCase}" disabled="{!v.disableButton}"/>
+                                </aura:if>
+                        </aura:if>
+                        
+                        
+/* Tabset Functionality on Lightning COmponent */
+======================================================
+  <div class="slds-col">
+            <div class="slds-grid slds-wrap">     
+                <div class="slds-size_1-of-1 slds-medium-size_1-of-2 slds-p-horizontal_medium slds-p-vertical_small">
+                    <lightning:tabset  variant="scoped">
+                        <lightning:tab label="Clinical Narration" id="one">
+                            <c:ACH_DFCI_Clinical_Narration_cmp recordId="{!v.recordId}"/>
+                        </lightning:tab>
+                        <lightning:tab label="Medical Records" id="two">
+                            <lightning:layout multipleRows="true" pullToBoundary="medium">
+                                <aura:iteration items="{!v.sObjectAttachedFiles}" var="file">
+                                    
+                                    <lightning:layoutItem padding="around-large" size="6" smallDeviceSize="12" mediumDeviceSize="6">
+                                        <div class="header-column"> 
+                                            
+                                            <lightning:fileCard fileId="{!file.Id}" description="{!file.Title}"/>
+                                            
+                                        </div>
+                                    </lightning:layoutItem>
+                                </aura:iteration>
+                            </lightning:layout> <br/>
+                            <center>
+                                <aura:if isTrue="{!v.showfilesbutton}">
+                                <lightning:button variant="brand" label="Click here to open the associated files in new window" title="Save" onclick="{! c.filePreview }" />
+                                </aura:if>
+                                </center>
+                        </lightning:tab>
+                        <lightning:tab label="Instructions" id="three">
+                            <c:Balu_DFCI_Physician_Portal_Reference_cmp />
+                        </lightning:tab>
+                        <lightning:tab label="Sample Review" id="four">
+                            <c:Balu_DFCI_Physician_Portal_SampleReview_cmp />
+                        </lightning:tab>
+                        <lightning:tab label="Completed Reviews" id="five">
+                            <c:Balu_HN_Cas_PhyReviews recordId="{!v.recordId}"/>
+                        </lightning:tab>
+                    </lightning:tabset>
+                </div>
+                <div class="slds-size_1-of-1 slds-medium-size_1-of-2 slds-p-horizontal_medium slds-p-vertical_small">
+                    <lightning:tabset  variant="scoped">
+                        <lightning:tab label="Physician Review" id="one">
+                            <aura:if isTrue="{!empty(v.case.COH_Physician__c)}">
+                                <div class="slds-p-right_medium">
+                                    <center>
+                                        <label for="form-element-01"> Please Accept the case !</label>
+                                    </center>  
+                                </div>
+                            </aura:if>
+                            <aura:if isTrue="{!not(empty(v.case.COH_Physician__c))}">
+                                <aura:if isTrue="{!v.EditPhyReview}">
+                                    <div class="slds-p-left_medium">
+                                        <div class="slds-p-right_medium">
+                                            <lightning:accordion allowMultipleSectionsOpen="true" onsectiontoggle="{! c.handleSectionToggle }" activeSectionName="{! v.activeSections }">
+                                                
+                                                <lightning:accordionSection name="A" label="Synopsis">   
+                                                    <span class="required">*</span>Synopsis: <lightning:inputRichText value="{!v.prRecord.Evidence__c}" class="tallTextArea"/><br/><br/>
+                                                </lightning:accordionSection>
+                                                <lightning:accordionSection name="C" label="Clinical Recommendations">
+                                                    <span class="required">*</span> Recommendations: <lightning:inputRichText value="{!v.prRecord.Clinical_Recommendations__c}" class="tallTextArea"/>
+                                                </lightning:accordionSection>
+                                                <lightning:accordionSection name="D" label="Clinical Trial Recommendations">
+                                                    <span class="required">*</span> Trial Recommendations: <lightning:inputRichText value="{!v.prRecord.Clinical_Trial_recommendation__c}" class="tallTextArea"/>
+                                                </lightning:accordionSection>
+                                                <lightning:accordionSection name="B" label="References">
+                                                    <span class="required">*</span>Referencestest: <lightning:inputRichText value="{!v.prRecord.References__c}" class="tallTextArea"/><br/><br/>
+                                                </lightning:accordionSection>
+                                                
+                                            </lightning:accordion>
+                                            
+                                        </div> 
+                                        <center>
+                                            <div class="slds-m-top_medium">
+                                                 <aura:if isTrue="{!v.notdisableButton}">
+                                                <lightning:button variant="brand" label="Save as Draft" title="Open Modal" onclick="{! c.savePhysicianReviewRecord }" disabled="{!v.savedisableButton}"/>            
+                                                </aura:if>
+                                                <lightning:button variant="brand" label="Submit" title="Open Modal" onclick="{! c.openModal3 }" disabled="{!v.disableButton}"/>
+                                                <!-- Here we wrapped our modal code inside aura:if. If it evaluates true, code inside it will be visible -->
+                                                <aura:if isTrue="{!v.openModal3}" >
+                                                    <div class="demo-only" style="height: 600px;">
+                                                        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                                                            <div class="slds-modal__container">
+                                                                <!-- Header of Modal -->
+                                                                <header class="slds-modal__header slds-modal__header_empty">
+                                                                    <lightning:buttonIcon iconName="utility:close" class="slds-modal__close" size="large" variant="bare" alternativeText="Close" onclick="{! c.closeModal3 }"/>
+                                                                </header>
+                                                                <!-- Body of Modal -->
+                                                                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                                                                    <div class="slds-grid slds-gutters">
+                                                                        <div class="slds-col slds-size_1-of-7">
+                                                                            <br/>
+                                                                            <center>
+                                                                                <lightning:icon iconName="utility:warning" alternativeText="Warning!" title="Warning" size ="large"/>
+                                                                                
+                                                                            </center>
+                                                                        </div>
+                                                                        <div class="slds-col slds-size_6-of-7">
+                                                                            <center>
+                                                                                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Are you sure you want to proceed ?</h2>
+                                                                                <br/><br/>
+                                                                                <aura:if isTrue="{!v.spinner}">
+                                                                                    <lightning:spinner alternativeText="Loading" size="Large" title ="Loading" />
+                                                                                </aura:if>
+                                                                                <lightning:button variant="brand" label="Yes" title="Yes" onclick="{! c.submitPhysicianReviewRecord }" />
+                                                                                <lightning:button variant="brand" label="No" title="No" onclick="{! c.closeModal3 }" />   
+                                                                                
+                                                                                
+                                                                                <!-- </footer> -->
+                                                                            </center>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </section>
+                                                        <!-- Backdrop to set background slightly opaque. -->
+                                                        <div class="slds-backdrop slds-backdrop_open"></div>
+                                                    </div>
+                                                </aura:if>                  
+                                                
+                                            </div>
+                                        </center>
+                                    </div>
+                                </aura:if>
+                                <aura:if isTrue="{!v.ReadOnlyReview}" >
+                                    <lightning:accordion allowMultipleSectionsOpen="true" onsectiontoggle="{! c.handleSectionToggle }" activeSectionName="{! v.activeSections }">
+                                        
+                                        <lightning:accordionSection name="A" label="Synopsis">
+                                            <div class="slds-form-element__control">
+                                                <b>Synopsis: </b> <br/>
+                                            </div>
+                                            <div class="test-id__field-value slds-form-element__static slds-grow word-break-ie11">
+                                                <ui:outputRichText  value="{!v.prRecord.Evidence__c}"/>                 
+                                            </div> 
+                                        </lightning:accordionSection>
+                                        
+                                        <lightning:accordionSection name="C" label="Recommendations">
+                                            <div class="slds-form-element__control">
+                                                <b>Clinical Recommendations:</b> <br/>
+                                            </div>
+                                            <div class="test-id__field-value slds-form-element__static slds-grow word-break-ie11">
+                                                <ui:outputRichText  value="{!v.prRecord.Recommendations__c}"/>                 
+                                            </div>     
+                                        </lightning:accordionSection>
+                                        
+                                        <lightning:accordionSection name="D" label="Trial Recommendations">
+                                            <div class="slds-form-element__control">
+                                                <b>Clinical Trial Recommendations:</b> <br/>
+                                            </div>
+                                            <div class="test-id__field-value slds-form-element__static slds-grow word-break-ie11">
+                                                <ui:outputRichText  value="{!v.prRecord.Trial_recommendation__c}"/>                 
+                                            </div>     
+                                        </lightning:accordionSection>                        
+                                        
+                                        <lightning:accordionSection name="B" label="References">
+                                            <div class="slds-form-element__control">
+                                                <b>References:</b> <br/>
+                                            </div>
+                                            <div class="test-id__field-value slds-form-element__static slds-grow word-break-ie11">
+                                                <ui:outputRichText  value="{!v.prRecord.References__c}"/>                 
+                                            </div> 
+                                            
+                                        </lightning:accordionSection>
+                                        
+                                    </lightning:accordion>
+                                </aura:if>
+                            </aura:if>
+                        </lightning:tab>
+                    </lightning:tabset>
+                    
+                    
+/*    Java Script helper class to map the values from controller to lightning attrbuts.*/
+=======================
+// Helper method to load the Physician review Record.
+    loadPERecord : function(component,event,helper) {
+        var prId = component.get("v.recordId");
+        var prRecAction = component.get("c.loadPhysicianReviewRecord"); 
+        prRecAction.setParams({
+            "evalId":prId
+            
+        });
+        prRecAction.setCallback(this, function(prRecord){
+            if(prRecord.getState() === "SUCCESS") {
+                if(prRecord.getReturnValue().length >0){
+                    if(prRecord.getReturnValue()[0].Physician_Review_Submitted_tech__c == true){
+                        component.set("v.prRecord",prRecord.getReturnValue()[0]);
+                        component.set("v.ReadOnlyReview",true);
+                    }
+                    if(prRecord.getReturnValue()[0].Physician_Review_Submitted_tech__c == false){
+                        component.set("v.prRecord",prRecord.getReturnValue()[0]);
+                        component.set("v.EditPhyReview",true);
+                    }
+                }
+                else{
+                    component.set("v.prRecord",component.get("v.prRecord"));
+                    component.set("v.EditPhyReview",true);
+                }
+            }  
+        });
+        
+        $A.enqueueAction(prRecAction);
+    },
+    
+    
