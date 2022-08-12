@@ -1,0 +1,13 @@
+trigger UpdateFieldInAccount on Contact (after insert, after update) { 
+    Map<Id,String> accountIdwithContactField = new Map<Id, String>(); 
+    for(Contact con:trigger.new) {
+        accountIdwithContactField.put(con.AccountId, con.Update_Checking__c);
+    } 
+    List<Account> listUpdatedAccount = new List<Account>(); 
+    for(Account acc:[Select id, Update_Checking__c From Account Where Id IN :accountIdwithContactField.Keyset()]) {
+        if(accountIdwithContactField.containsKey(acc.id)) {
+            listUpdatedAccount.add(new Account(Id = acc.id, Update_Checking__c=accountIdwithContactField.get(acc.id)));
+        }
+    }
+    update listUpdatedAccount;
+}
