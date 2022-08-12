@@ -1,0 +1,24 @@
+   trigger contactToAccountUpdateTrigger on Contact (before update, after update) {
+    
+    if(trigger.isBefore){
+        system.debug('Event before trigger');
+    }
+    else if(trigger.isAfter){
+        system.debug('Event after trigger');
+        if(trigger.isUpdate){            
+            Map<Id,Contact> conMapItem=new Map<Id,Contact>();
+            
+            for(Contact con:Trigger.new){
+                conMapItem.put(con.AccountId,con);        
+            }
+            List<Account> accObjList=[select Id,Name,Phone,(select Id,AccountId,Name,Phone from Contacts) from Account where Id in:conMapItem.keyset()];
+            if(accObjList.size()>0){
+                for(Account a:accObjList){
+                    a.Phone=conMapItem.get(a.id).Phone;            
+                }
+                update accObjList;        
+            }
+        }
+    }
+    
+}
