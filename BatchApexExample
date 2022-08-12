@@ -11,7 +11,7 @@ global class BatchApexExample implements Database.Batchable<sObject> {
         // process each batch of records default size is 200
         for(Account acc : accList) {        
             // Update the Account Name 
-            acc.Name = acc.Name + 'sfdcpoint';
+            acc.Name = acc.Name + 'test';
         }
         try {
             // Update the Account Record
