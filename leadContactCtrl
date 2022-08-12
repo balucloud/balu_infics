@@ -1,0 +1,8 @@
+   public class leadContactCtrl {
+  @AuraEnabled
+    public static List<Lead> leadContactList(String recordId){
+        List<Lead> leadList = [Select Id, Contact__c, Contact__r.Name, Contact__r.FirstName, Contact__r.LastName, Contact__r.Email, Contact__r.Phone, Contact__r.Description From Lead Where id=:recordId];
+        //system.debug('leadList ' + leadList);
+        return leadList;
+    }  
+}
