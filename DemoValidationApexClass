@@ -1,0 +1,53 @@
+All Case Validations: Balu_Case_Handler class methods
+______________________________
+*/
+    // EAR Case Validation at "Procurement":
+    public static void setBaEARRecordsProcurement(List<Case> vListCase){
+        for(Case vCase1300 : vListCase){
+            Case vOldCase1 = (Case)Trigger.oldMap.get(vCase1300.Id);
+            if(vCase1300.status != vOldCase1.status) {
+                Case vOldCase = (Case)Trigger.oldMap.get(vCase1300.Id);
+                If(vCase1300.status=='Procurement' && vOldCase.status.equals('New')){
+                    Case varActualCaseRecord1300 = (Case)Trigger.newMap.get(vCase1300.Id); 
+                    varActualCaseRecord1300.adderror('Error: Code 100: You are not allowed to skip a step. Please follow the workflow.');
+                }
+            }
+        }
+    }
+    
+    // EAR Case Validation at "Narration":
+    public static void setBaEARClinicalNarration(List<Case> vListCase){
+        for(Case vCase13 : vListCase){
+            Case vOldCase = (Case)Trigger.oldMap.get(vCase13.Id);
+            If(vCase13.status=='Narration' && (vOldCase.status.equals('New') || vOldCase.status.equals('Team Assignment'))){
+                Case varActualCaseRecord13 = (Case)Trigger.newMap.get(vCase13.Id); 
+                varActualCaseRecord13.adderror('Error: Code 101: You are not allowed to skip a step. Please follow the workflow.');
+            }
+        }
+    }
+    
+    // EAR Case Validation at "PhyReview" for PhyReview - PhyReview Record type:
+    public static void setBaEARPhysicianReviewPhyReviewRecordtype(List<Case> vListCase){
+        set<string> Employerset = new set<string>();
+        
+        HN_Physician_Expert_Allowed_Customer__mdt[] EmployersAllowedforPhyExpAssignment = [select Employer__c from HN_Physician_Expert_Allowed_Customer__mdt];
+        for(HN_Physician_Expert_Allowed_Customer__mdt  Record:EmployersAllowedforPhyExpAssignment){
+            Employerset.add(Record.Employer__c);
+        }
+        
+        for(Case vCase1 : vListCase){
+            Case vOldCase111 = (Case)Trigger.oldMap.get(vCase1.Id);
+            if(vCase1.status != vOldCase111.status) {
+                Case vOldCase = (Case)Trigger.oldMap.get(vCase1.Id);
+                if(vCase1.status=='PhyReview' && vOldCase.Status=='Narration' && ( vCase1.Diagnosis__c ==null || vCase1.DateDiagnosis__c ==null) ){
+                        Case varActualCaseRecord1 = (Case)Trigger.newMap.get(vCase1.Id); 
+                        varActualCaseRecord1.adderror('Please provide Current Stage and Date of Diagnosis');
+                    }
+                if(vCase1.Status=='PhyReview' &&(vOldCase.Status=='New'||vOldCase.Status=='Procurement'||vOldCase.Status=='ClinTeam Assignment')){
+                    Case varActualCaseRecord1 = (Case)Trigger.newMap.get(vCase1.Id); 
+                    varActualCaseRecord1.adderror('Error: Code 102 : You are not allowed to skip a step. Please follow the workflow.');    
+                }
+            }
+        }
+    }
+    
