@@ -64,19 +64,19 @@ trigger caseValidationTrigger on Case (before insert, before update,after insert
                 for(Case vCase : Trigger.new){
                     if(vCase.RecordTypeId==Schema.SObjectType.Case.getRecordTypeInfosByName().get('EAR').getRecordTypeId())
                     {
-                        if(vCase.status=='Records Procurement'){
+                        if(vCase.status=='Procurement'){
                             vListEARCases00.add(vCase);
                             Balu_Case_Handler.setBaluEARRecordsProcurement(vListEARCases00);
                         }
-                        if(vCase.status=='Clinical Narration'){
+                        if(vCase.status=='Narration'){
                             vListEARCases1.add(vCase);
                             Balu_Case_Handler.setAHEARClinicalNarration(vListEARCases1);
                         }
-                        if(vCase.status=='Physician Review'){
+                        if(vCase.status=='PhyReview'){
                             vListEARCases2.add(vCase);
                             Balu_Case_Handler.setBaluEARPhysicianReviewPhysicianReviewRecordtype(vListEARCases2);
                         }
-                        if(vCase.status=='Peer To Peer'){
+                        if(vCase.status=='PToP'){
                             vListEARCases3.add(vCase);
                             Balu_Case_Handler.setAHEARPhysicianReviewPhysicianP2PReviewRecordtype(vListEARCases3);
                         }
@@ -89,23 +89,23 @@ trigger caseValidationTrigger on Case (before insert, before update,after insert
                             Balu_Case_Handler.setBaluEARClosed(vListEARCases5);
                         }
                     }
-                    if(vCase.RecordTypeId==Schema.SObjectType.Case.getRecordTypeInfosByName().get('APO').getRecordTypeId()){
+                    if(vCase.RecordTypeId==Schema.SObjectType.Case.getRecordTypeInfosByName().get('APOCustomer').getRecordTypeId()){
                         vListAPOCases.add(vCase);
-                        Balu_Case_Handler.setBaluAPORecordsprocurment(vListAPOCases);
-                        Balu_Case_Handler.setBaluAPOClinicalNarration(vListAPOCases);
-                        Balu_Case_Handler.setBaluAPOPhysicianReviewPhysicianReviewRecordtype(vListAPOCases);
-                        Balu_Case_Handler.setBaluAPOPhysicianReviewP2PReviewRecordtype(vListAPOCases);
-                        Balu_Case_Handler.setBaluAPOOutcomes(vListAPOCases);
-                        Balu_Case_Handler.setBaluAPOClosed(vListAPOCases);
+                        Balu_Case_Handler.setBaluAPOCustomerRecordsprocurment(vListAPOCases);
+                        Balu_Case_Handler.setBaluAPOCustomerClinicalNarration(vListAPOCases);
+                        Balu_Case_Handler.setBaluAPOCustomerPhysicianReviewPhysicianReviewRecordtype(vListAPOCases);
+                        Balu_Case_Handler.setBaluAPOCustomerPhysicianReviewP2PReviewRecordtype(vListAPOCases);
+                        Balu_Case_Handler.setBaluAPOCustomerOutcomes(vListAPOCases);
+                        Balu_Case_Handler.setBaluAPOCustomerClosed(vListAPOCases);
                     }
 
-                    if(vCase.RecordTypeId==Schema.SObjectType.Case.getRecordTypeInfosByName().get('Curbside Consult').getRecordTypeId() && (Trigger.isUpdate && Trigger.isBefore)){
-                        Balu_Case_Curbside_Handle.validateCurbsideStatus(Trigger.new);
-                        Balu_Case_Curbside_Handle.CurbreviewDuedate(Trigger.New);
+                    if(vCase.RecordTypeId==Schema.SObjectType.Case.getRecordTypeInfosByName().get('Consult').getRecordTypeId() && (Trigger.isUpdate && Trigger.isBefore)){
+                        Balu_Case_Consult_Handle.validateConsultStatus(Trigger.new);
+                        Balu_Case_Consult_Handle.ConsultreviewDuedate(Trigger.New);
                         
                     }
                     
-                    if(vCase.RecordTypeId==Schema.SObjectType.Case.getRecordTypeInfosByName().get('Grail Posttest').getRecordTypeId() && (Trigger.isUpdate && Trigger.isBefore)){
+                    if(vCase.RecordTypeId==Schema.SObjectType.Case.getRecordTypeInfosByName().get('Posttest').getRecordTypeId() && (Trigger.isUpdate && Trigger.isBefore)){
                         Balu_Case_GRCustomer_Validations.validateGrailStatus(Trigger.new);   
                     }
                 } 
@@ -137,8 +137,7 @@ trigger caseValidationTrigger on Case (before insert, before update,after insert
         if(Trigger.isBefore & Trigger.isUpdate){
             
             Balu_Case_Handler.updateTurnAroundTime(Trigger.new);
-            //Updates the Case TAT fields used in TAT Component.
-            
+                        
             Balu_Case_Handler.setTurnAroundTime(Trigger.new);
         }
         
